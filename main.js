@@ -57,7 +57,7 @@ function updateGraphColors() {
     .getComputedStyle(document.documentElement)
     .getPropertyValue("--bg-color")
     .trim();
-  Chart.defaults.global.defaultFontColor = fgcolor;
+  Chart.defaults.font.color = fgcolor;
   for (const i in Chart.instances) {
     const c = Chart.instances[i];
     c.options.scales.yAxes[0].gridLines.color = fgcolor;
@@ -66,7 +66,7 @@ function updateGraphColors() {
   }
 }
 
-function createGraphContent(ifdata) {
+function createGraphContent(ifData) {
   const options = {
     title: {
       display: true,
@@ -126,7 +126,7 @@ function createGraphContent(ifdata) {
     });
   }
 
-  for (const entry of ifdata) {
+  for (const entry of ifData) {
     const date = new Date(entry.time * 1000);
     data.labels.push(date.toSpecialFormattedString(timeScale));
     data.datasets[0].data.push(Math.roundTo(entry.rx / 1024 ** 3, 3));
@@ -213,12 +213,11 @@ let bgcolor = getComputedStyle(rootElement)
   .trim();
 
 /* Chart.js global configuration options */
-Chart.defaults.global.elements.rectangle.borderWidth = 2;
-Chart.platform.disableCSSInjection = true;
-Chart.defaults.global.defaultFontFamily =
-  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif";
-Chart.defaults.global.defaultFontColor = fgcolor;
-Chart.defaults.scale.gridLines.color = fgcolor;
+Chart.defaults.elements.borderWidth = 2;
+Chart.defaults.font.family =
+  "-apple-system, NanumGothic, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif";
+Chart.defaults.font.color = fgcolor;
+Chart.defaults.scale.grid.color = fgcolor;
 
 const usp = new URLSearchParams(window.location.search);
 
@@ -302,7 +301,7 @@ window.addEventListener("load", updateGraphColors);
 
 /* Style charts before and after printing page */
 window.addEventListener("beforeprint", () => {
-  Chart.defaults.global.defaultFontColor = "black";
+  Chart.defaults.font.color = "black";
   for (const i in Chart.instances) {
     const c = Chart.instances[i];
     c.options.scales.yAxes[0].gridLines.color = "black";
