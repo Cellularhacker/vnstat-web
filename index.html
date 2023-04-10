@@ -1,56 +1,74 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
 
-		<title>Bandwidth usage report</title>
+    <title>Bandwidth usage report</title>
 
-		<meta name="author" content="Kian Kasad">
+    <meta name="author" content="Kian Kasad" />
 
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-		<script src="Chart.min.js" integrity="sha256-t9UJPrESBeG2ojKTIcFLPGF7nHi2vEc7f5A2KpH/UBU="></script>
-		<script defer src="main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!--    <script src="Chart.min.js"></script>-->
+    <script defer src="main.js"></script>
 
-		<link rel="stylesheet" href="style.css" />
-	</head>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-	<body>
-		<header>
-			<h2>Bandwidth usage report</h2>
-			<form method=GET onchange="this.submit();">
-				<div>
-					<label for="ifname-select">Interface:</label>
-					<select name=ifname id="ifname-select">
-					</select>
-				</div>
-				<div>
-					<label for=stack-checkbox>Stack graphs</label>
-					<input type=checkbox name=stack id=stack-checkbox />
-				</div>
-				<div>
-					<label for=ts-select>Time scale:</label>
-					<select name=ts id="ts-select">
-						<option value=hour id=ts-h>Hourly</option>
-						<option value=day id=ts-d>Daily</option>
-						<option value=month id=ts-m>Monthly</option>
-						<option value=year id=ts-y>Yearly</option>
-						<option value=top id=ts-t>Top (daily)</option>
-					</select>
-				</div>
-				<div>
-					<label for=nr-box>Time slots:</label>
-					<input type=number name=nr id=nr-box min=1 max=50 />
-				</div>
-			</form>
-		</header>
+  <body>
+    <header>
+      <h2>Bandwidth usage report</h2>
+      <form method="GET" onchange="this.submit();">
+        <div>
+          <label class="switch">
+            Color Theme
+            <input type="checkbox" id="toggle-theme" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div>
+          <label for="ifname-select">Interface:</label>
+          <select name="ifname" id="ifname-select"></select>
+        </div>
+        <div>
+          <label for="stack-checkbox">Stack graphs</label>
+          <input type="checkbox" name="stack" id="stack-checkbox" />
+        </div>
+        <div>
+          <label for="ts-select">Time scale:</label>
+          <select name="ts" id="ts-select">
+            <option value="hour" id="ts-h">Hourly</option>
+            <option value="day" id="ts-d">Daily</option>
+            <option value="month" id="ts-m">Monthly</option>
+            <option value="year" id="ts-y">Yearly</option>
+            <option value="top" id="ts-t">Top (daily)</option>
+          </select>
+        </div>
+        <div>
+          <label for="nr-box">Time slots:</label>
+          <input type="number" name="nr" id="nr-box" min="1" max="50" />
+        </div>
+      </form>
+    </header>
 
-		<noscript>
-			<p>JavaScript is required to render the graphs</p>
-		</noscript>
-		<div class="canvas-container">
-			<canvas id="graph-canvas">Your browser does not support canvas elements.</canvas>
-		</div>
-
-	</body>
+    <noscript>
+      <p>JavaScript is required to render the graphs</p>
+    </noscript>
+    <div class="canvas-container">
+      <canvas id="graph-canvas"
+        >Your browser does not support canvas elements.</canvas
+      >
+    </div>
+    <script>
+      const toggle = document.getElementById("toggle-theme");
+      toggle.addEventListener("click", () => {
+        if (toggle.checked) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      });
+    </script>
+  </body>
 </html>
