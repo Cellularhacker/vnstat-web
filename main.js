@@ -100,7 +100,7 @@ function createGraphContent(ifData) {
       ],
     },
   };
-  const data = {
+  let data = {
     labels: [],
     datasets: [
       {
@@ -116,7 +116,9 @@ function createGraphContent(ifData) {
         borderColor: "#F4D03F",
       },
     ],
+    options: options,
   };
+
   if (!stackGraphs) {
     data.datasets.push({
       label: "Total",
@@ -136,8 +138,6 @@ function createGraphContent(ifData) {
         Math.roundTo((entry.rx + entry.tx) / 1024 ** 3, 3)
       );
   }
-
-  Chart.Bar("graph-canvas", { data: data, options: options });
 }
 
 /*
