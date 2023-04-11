@@ -19,7 +19,6 @@ Date.prototype.getDayOfWeekName = function () {
     "Saturday",
   ][this.getDay()];
 };
-
 Date.prototype.toSpecialFormattedString = function (type) {
   switch (type) {
     case "hour":
@@ -66,8 +65,33 @@ function updateGraphColors() {
   }
 }
 
+function getCurrentScales() {
+  if (stackGraphs === false) {
+    return {};
+  }
+  return {
+    xAxes: {
+      stacked: [
+        {
+          stacked: stackGraphs,
+        },
+      ],
+    },
+    yAxes: {
+      stacked: [
+        {
+          stackGraphs,
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ],
+    },
+  };
+}
+
 function createGraphContent(ifData) {
-  const options = {
+  let options = {
     title: {
       display: true,
       text: ifname,
@@ -84,43 +108,32 @@ function createGraphContent(ifData) {
         },
       },
     },
-    scales: {
-      xAxes: [
+    scales: getCurrentScales(),
+  };
+  let cfg = {
+    type: "bar",
+    data: {
+      labels: [],
+      datasets: [
         {
-          stacked: stackGraphs,
+          label: "Rx",
+          data: [],
+          backgroundColor: "#5DADE2",
+          borderColor: "#3498DB",
         },
-      ],
-      yAxes: [
         {
-          stacked: stackGraphs,
-          ticks: {
-            beginAtZero: true,
-          },
+          label: "Tx",
+          data: [],
+          backgroundColor: "#F7DC6F",
+          borderColor: "#F4D03F",
         },
       ],
     },
-  };
-  let data = {
-    labels: [],
-    datasets: [
-      {
-        label: "Rx",
-        data: [],
-        backgroundColor: "#5DADE2",
-        borderColor: "#3498DB",
-      },
-      {
-        label: "Tx",
-        data: [],
-        backgroundColor: "#F7DC6F",
-        borderColor: "#F4D03F",
-      },
-    ],
     options: options,
   };
 
   if (!stackGraphs) {
-    data.datasets.push({
+    cfg.data.datasets.push({
       label: "Total",
       data: [],
       backgroundColor: "#58D68D",
@@ -130,14 +143,24 @@ function createGraphContent(ifData) {
 
   for (const entry of ifData) {
     const date = new Date(entry.time * 1000);
-    data.labels.push(date.toSpecialFormattedString(timeScale));
-    data.datasets[0].data.push(Math.roundTo(entry.rx / 1024 ** 3, 3));
-    data.datasets[1].data.push(Math.roundTo(entry.tx / 1024 ** 3, 3));
-    if (!stackGraphs)
-      data.datasets[2].data.push(
-        Math.roundTo((entry.rx + entry.tx) / 1024 ** 3, 3)
-      );
+    const currLabel = date.toSpecialFormattedString(timeScale);
+    cfg.data.labels.push(currLabel);
+    const currRx = Math.roundTo(entry.rx / 1024 ** 3, 3);
+    cfg.data.datasets[0].data.push(currRx);
+    const currTx = Math.roundTo(entry.tx / 1024 ** 3, 3);
+    cfg.data.datasets[1].data.push(currTx);
+    if (!stackGraphs) cfg.data.datasets[2].data.push(currRx + currTx);
   }
+
+  // console.log("cfg [0]=>", cfg.data.datasets[0].data);
+  // console.log("cfg [1]=>", cfg.data.datasets[1].data);
+  // console.log("cfg [2]=>", cfg.data.datasets[2].data);
+  //
+  // console.log("cfg =>", cfg);
+  //
+  // console.log("stackGraphs =>", stackGraphs);
+
+  new Chart(document.getElementById("graph-canvas"), cfg);
 }
 
 /*
@@ -193,14 +216,20 @@ function processInterfaceList(data) {
   document.getElementById(`if-${ifname}`).selected = true;
 
   /* Fetch JSON data from vnstat and create graphs */
-  fetch(
-    `data.php?requesttype=data&ifname=${ifname}&timescale=${timeScale}&period=${timeSlots}`,
-    {
-      credentials: "same-origin",
-    }
-  )
-    .then((response) => response.json())
-    .then((data) => processData(data));
+  if (window.location.hostname === "localhost") {
+    fetch("./sample/request_type_data.json")
+      .then((response) => response.json())
+      .then((data) => processData(data));
+  } else {
+    fetch(
+      `data.php?requesttype=data&ifname=${ifname}&timescale=${timeScale}&period=${timeSlots}`,
+      {
+        credentials: "same-origin",
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => processData(data));
+  }
 }
 
 /* Get '--fg-color' and '--bg-color' custom CSS properties */
@@ -290,11 +319,17 @@ window
   .addEventListener("change", updateGraphColors);
 
 /* Fetch list of available interfaces */
-fetch("data.php?requesttype=iflist", {
-  credentials: "same-origin",
-})
-  .then((response) => response.json())
-  .then((data) => processInterfaceList(data));
+if (window.location.hostname === "localhost") {
+  fetch("./sample/request_type_iflist.json")
+    .then((response) => response.json())
+    .then((data) => processInterfaceList(data));
+} else {
+  fetch("data.php?requesttype=iflist", {
+    credentials: "same-origin",
+  })
+    .then((response) => response.json())
+    .then((data) => processInterfaceList(data));
+}
 
 /* Update graph colors when all content has loaded */
 window.addEventListener("load", updateGraphColors);
