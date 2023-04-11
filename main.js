@@ -75,6 +75,7 @@ function getCurrentScales() {
         display: true,
         drawOnChartArea: true,
         drawTicks: true,
+        color: "#808080",
       },
     },
     y: {
@@ -85,6 +86,7 @@ function getCurrentScales() {
         display: true,
         drawOnChartArea: true,
         drawTicks: true,
+        color: "#808080",
       },
     },
   };
