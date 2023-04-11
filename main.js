@@ -109,6 +109,7 @@ function createGraphContent(ifData) {
       },
     },
     scales: getCurrentScales(),
+    showLine: true,
   };
   let cfg = {
     type: "bar",
