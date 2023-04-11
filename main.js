@@ -66,10 +66,34 @@ function updateGraphColors() {
 }
 
 function getCurrentScales() {
+  let defConf = {
+    x: {
+      border: {
+        display: true,
+      },
+      grid: {
+        display: true,
+        drawOnChartArea: true,
+        drawTicks: true,
+      },
+    },
+    y: {
+      border: {
+        display: false,
+      },
+      grid: {
+        display: true,
+        drawOnChartArea: true,
+        drawTicks: true,
+      },
+    },
+  };
+
   if (stackGraphs === false) {
-    return {};
+    return defConf;
   }
   return {
+    ...defConf,
     xAxes: {
       stacked: [
         {
