@@ -8,6 +8,11 @@ A web interface for [vnstat](https://humdi.net/vnstat/) using
 		src="https://raw.githubusercontent.com/kdkasad/vnstat-web/images/screenshot.png" />
 </div>
 
+## Install by using `git clone`
+```shell
+git clone -b main --single-branch --depth=1 https://github.com/Cellularhacker/vnstat-web.git
+```
+
 ## Features
 
 * Automatic light/dark theme
